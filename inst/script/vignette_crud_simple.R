@@ -7,7 +7,7 @@ wd <- "/tmp"
 filename  <- "sq_test.sq"
 
 
-# update a table ----------------------------------------------------------
+# setup_data --------------------------------------------------------------
 
 ## connect
 con <- dbConnect(drv=dbDriver("SQLite"), con =":memory:", dbname=file.path(wd, filename))
@@ -19,7 +19,7 @@ dbRemoveTable(con, "iris")
 iris1 <- iris
 names(iris1) <- gsub("\\.", "_" ,names(iris1)) # dots are not compatible with this syntax
 ## write it
-dbWriteTable(con, "iris", iris1, row.names = TRUE)      # create and populate a table (adding the row names as a separate columns used as row ID)
+dbWriteTable(con, "iris", iris1, row.names = "rownames")      # create and populate a table (adding the row names as a separate columns used as row ID)
 data1 <- dbReadTable(con, "iris")
 head(data1)
 
@@ -27,14 +27,12 @@ head(data1)
 iris2 <- iris1
 iris2$Sepal_Length <- 5
 
-iris2$row_names <- rownames(iris)  # use the row names as unique row ID
+iris2$rownames <- rownames(iris)  # use the row names as unique row ID
+
+# update a table ----------------------------------------------------------
+
 ## update using variables
-crud_update <- function(conn, df, name ) {
-	update_query <- query_update_get(df = df, name = name, id_primary = "row_names")
-	update <- dbSendQuery(con, update_query )
-	dbBind(res = update, params = iris2)  # send the updated data
-}
-crud_update(con, iris1, "iris")
+crud_update(con, iris2, "iris")
 data2 <- dbReadTable(con, "iris")
 head(data2)
 
@@ -46,7 +44,14 @@ new_line<-
 		50,          13.5,           14,          20, "new_species"
 	)
 require(dplyr)
-head(bind_rows(
-	bind_cols(new_line, tibble(row_names = NA)),
-	iris2))
+new_df <-
+	head(bind_rows(
+		bind_cols(new_line, tibble(rownames = NA)),
+		iris2))
+new_df
+crud_sync(con, new_df, "iris")
+
+data3 <- dbReadTable(con, "iris")
+unique(data3$Species)
+
 ######################
