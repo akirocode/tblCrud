@@ -23,13 +23,11 @@ dbWriteTable(con, "iris", iris1, row.names = "rownames")      # create and popul
 data1 <- dbReadTable(con, "iris")
 head(data1)
 
-# create a modified version of `iris`
-iris2 <- iris1
-iris2$Sepal_Length <- 5
-
-iris2$rownames <- rownames(iris)  # use the row names as unique row ID
-
 # update a table ----------------------------------------------------------
+
+# create a modified version of `iris`
+iris2 <- data1
+iris2$Sepal_Length <- 5
 
 ## update using variables
 crud_update(con, iris2, "iris")
@@ -41,17 +39,21 @@ head(data2)
 new_line<-
 	tribble(
 		~Sepal_Length, ~Sepal_Width, ~Petal_Length, ~Petal_Width, ~Species,
-		50,          13.5,           14,          20, "new_species"
+		50,           3.5,           14,          20, "new_species"
 	)
 require(dplyr)
-new_df <-
-	head(bind_rows(
-		bind_cols(new_line, tibble(rownames = NA)),
-		iris2))
-new_df
+new_df <-	bind_rows(new_line,	iris2)
+head(new_df)
 crud_sync(con, new_df, "iris")
 
 data3 <- dbReadTable(con, "iris")
+data3
+# todo: the id is not updated
 unique(data3$Species)
 
 ######################
+data3[order(data3$Sepal_Width),]
+
+## rownames problem
+mt2 <- bind_cols(mtcars, tibble(rownames(mtcars)))
+bind_rows(mt2, data.frame(cyl = 8))
