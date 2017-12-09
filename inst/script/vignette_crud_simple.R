@@ -68,13 +68,11 @@ iris2 <- iris
 df <- iris2
 ## query get
 alter_query <- query_create_get(con, df, tablename)
-message(alter_query)
 # query send
 update <- dbSendQuery(con, alter_query)
 dbReadTable(con, tablename)
 df2 <- cbind(df, data.frame( rownames = as.character(NA)))
 head(df2 %>% tbl_df)
-head(new_df)
 names(df2) <- gsub("\\.", "_" ,names(df2)) # dots are not compatible with this syntax
 crud_sync(con, df2, tablename)
 dbReadTable(con, tablename)
