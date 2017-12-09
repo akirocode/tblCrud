@@ -51,7 +51,51 @@ data3
 # todo: the id is not updated
 unique(data3$Species)
 
+#######
+## create table with incremental id
+
+# crud_create -------------------------------------------------------------
+
+## connect
+
+con <- dbConnect(drv=dbDriver("SQLite"), dbname=file.path(wd, filename))
+
+## remove the old table
+tablename <- "iris2"
+dbRemoveTable(con, tablename)
+## setup the new table
+iris2 <- iris
+df <- iris2
+## query get
+fields <- vapply(df, function(x) DBI::dbDataType(con, x), character(1))
+names(fields) <- gsub("\\.", "_" ,names(fields)) # dots are not compatible with this syntax
+field_names <- dbQuoteIdentifier(con, names(fields))
+field_types <- unname(fields)
+fields <- paste0(field_names, " ", field_types)
+
+field_string <- paste(fields, collapse = ",\n  ")
+field_string
+alter_query <- paste("CREATE TABLE IF NOT EXISTS ", tablename, " (\n",
+                     "rownames integer primary key asc autoincrement,\n ",
+										 field_string,
+										 ");"
+)
+message(alter_query)
+# query send
+update <- dbSendQuery(con, alter_query)
+dbReadTable(con, tablename)
+df2 <- cbind(df, data.frame( rownames = as.character(NA)))
+head(df2 %>% tbl_df)
+head(new_df)
+undebug(crud_sync)
+names(df2) <- gsub("\\.", "_" ,names(df2)) # dots are not compatible with this syntax
+crud_sync(con, df2, tablename)
+dbReadTable(con, tablename)
+dbDisconnect(con)
+# alter_query <- "ALTER TABLE iris AUTO_INCREMENT = 1;"
+
 ######################
+## wip
 data3[order(data3$Sepal_Width),]
 
 ## rownames problem
