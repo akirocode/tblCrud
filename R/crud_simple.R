@@ -1,6 +1,8 @@
 # This module is a "collection of functions" that build up query from the schema of a data.frame.
 # See tests for examples.
 
+# query_sync: update insert -----------------------------------------------
+
 query_update_get <- function(df, name, id_primary = NULL) {
 	if (is.null(id_primary)) {
 		id_primary <- id_primary_get_from_attr(df)
