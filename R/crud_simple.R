@@ -31,8 +31,13 @@ query_insert_get <- function(df, name, id_primary = NULL) {
 
 # private -----------------------------------------------------------------
 
+dot2underscore  <- function(str) {
+	gsub("\\.", "_" ,str) # dots in placeholders ("$var_name") are not compatible with this syntax
+}
+
 query_part_assegnation_get <- function(str) {
-	paste0( "\"", str, "\"=$",	str )
+	no_dot_str <- dot2underscore(str)
+	paste0( "\"", str, "\"=$",	no_dot_str )
 }
 
 id_primary_get_from_attr <- function(df) {

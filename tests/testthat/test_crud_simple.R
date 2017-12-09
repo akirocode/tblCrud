@@ -19,6 +19,20 @@ test_that("query_update_get works with one key and one value", {
 
 })
 
+test_that("query_update_get works with one key and one value with '.' char", {
+	tbl <-
+		tribble(
+			~col.1, ~co.l2,
+			1,     2L
+		)
+	expect <- 'update iris set "co.l2"=$co_l2 WHERE "col.1"=$col_1'
+
+	object <- query_update_get(tbl, "iris", "col.1")
+
+	expect_equal(object , expect)
+
+})
+
 test_that("query_update_get works with one key and multiple values", {
 	tbl <-
 		tribble(
