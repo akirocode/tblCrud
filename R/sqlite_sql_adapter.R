@@ -1,5 +1,23 @@
 id_primary =  "rownames"
 
+# crud_create -------------------------------------------------------------
+
+crud_create <- function( conn, df, name ) {
+	.crud_create_empty(conn, df, name)
+	df2 <- cbind(df, data.frame( rownames = as.character(NA)))
+	crud_sync(conn, df2, name)
+}
+
+.crud_create_empty <- function( conn, df, name ) {
+	create_query <- query_create_get(conn, df, name, id_primary)
+	dbSendQuery(conn, create_query)
+}
+
+# crud_read ---------------------------------------------------------------
+
+# crud_sync ---------------------------------------------------------------
+# NB: the name sync is not good: from CRUD, update should be used.
+
 crud_update <- function( conn, df, name ) {
 	update_query <- query_update_get(df = df, name = name, id_primary = id_primary)
 	update <- dbSendQuery(conn, update_query )

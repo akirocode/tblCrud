@@ -109,7 +109,27 @@ test_that("Simple table sync", {
 })
 ## work in progress
 
-## test crud_update function
+## test crud_update function(?)
+
+context("test crud_create")
+
+test_that("crud_create works.. todo", {
+	## 0. setup
+	t_db <- mk_test_db()
+	td <- mk_td(t_db)
+	## 1. init
+	df <- iris
+	names(df) <- gsub("\\.", "_" ,names(df)) # dots are not compatible with this syntax
+	tablename <- "iris"
+  ## 2. do
+	crud_create(t_db$con, df, tablename)
+  ## 3. check
+	iris_read <- dbReadTable(t_db$con, tablename)
+	expect_equal(1:150, iris_read$rownames)
+  ## 4.
+	rm_test_db(t_db)
+})
+
 
 
 

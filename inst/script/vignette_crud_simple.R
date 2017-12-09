@@ -66,15 +66,9 @@ dbRemoveTable(con, tablename)
 ## setup the new table
 iris2 <- iris
 df <- iris2
-## query get
-alter_query <- query_create_get(con, df, tablename)
-# query send
-update <- dbSendQuery(con, alter_query)
-dbReadTable(con, tablename)
-df2 <- cbind(df, data.frame( rownames = as.character(NA)))
-head(df2 %>% tbl_df)
-names(df2) <- gsub("\\.", "_" ,names(df2)) # dots are not compatible with this syntax
-crud_sync(con, df2, tablename)
+## create
+names(df) <- gsub("\\.", "_" ,names(df)) # dots are not compatible with this syntax
+update <- crud_create(con, df, tablename)
 dbReadTable(con, tablename)
 dbDisconnect(con)
 ## increment
