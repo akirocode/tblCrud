@@ -74,7 +74,7 @@ test_that("query_insert_get works with one key and one value", {
 			~col1, ~col2,
 			1,     2L
 		)
-	expect <- 'INSERT INTO iris (col2) VALUES ($col2)'
+	expect <- 'INSERT INTO iris (`col2`) VALUES ($col2)'
 
 	object <- query_insert_get(tbl, "iris", "col1")
 
@@ -88,7 +88,7 @@ test_that("query_insert_get works with different column and table names", {
 			~co1, ~co2,
 			1,     2L
 		)
-	expect <- 'INSERT INTO mtcars (co2) VALUES ($co2)'
+	expect <- 'INSERT INTO mtcars (`co2`) VALUES ($co2)'
 
 	object <- query_insert_get(tbl, "mtcars", "co1")
 
@@ -103,7 +103,7 @@ test_that("query_insert_get works with one key and multiple values", {
 			1,     2L,     "3" ,   "4"
 		)
 
-	expect <- 'INSERT INTO iris (col2, col3, col4) VALUES ($col2, $col3, $col4)'
+	expect <- 'INSERT INTO iris (`col2`, `col3`, `col4`) VALUES ($col2, $col3, $col4)'
 
 	object <- query_insert_get(tbl, "iris", "col1")
 
@@ -118,7 +118,7 @@ test_that("query_insert_get searching id into attrs", {
 			1,     2L
 		)
 	attr(tbl, which = "id_primary") <- "col1"
-	expect <- 'INSERT INTO iris (col2) VALUES ($col2)'
+	expect <- 'INSERT INTO iris (`col2`) VALUES ($col2)'
 
 	object <- query_insert_get(tbl, "iris")
 

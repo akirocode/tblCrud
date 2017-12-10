@@ -22,8 +22,12 @@ query_insert_get <- function(df, name, id_primary = NULL) {
 		id_primary <- id_primary_get_from_attr(df)
 	}
 	var_list = names(df)[names(df) != id_primary]
-	column_list = paste0(collapse = ", ", var_list)
-	value_list = paste0(collapse = ", ", "$", var_list)
+	fixed_var_list = dot2underscore(var_list)
+	## todo: remove this line
+	con <- dbConnect(drv=dbDriver("SQLite"), con =":memory:")
+	var_list_quoted <- dbQuoteIdentifier(con, var_list)
+	column_list = paste0(collapse = ", ", var_list_quoted)
+	value_list = paste0(collapse = ", ", "$", fixed_var_list)
 	return(
 		paste0("INSERT INTO ", name, " (", column_list, ") VALUES (", value_list, ")")
 	)
