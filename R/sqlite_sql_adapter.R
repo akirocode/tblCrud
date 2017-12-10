@@ -21,11 +21,13 @@ crud_create <- function( conn, df, name ) {
 crud_update <- function( conn, df, name ) {
 	update_query <- query_update_get(df = df, name = name, id_primary = id_primary)
 	update <- dbSendQuery(conn, update_query )
+	colnames(df) <- dot2underscore(colnames(df))
 	dbBind(res = update, params = df)  # send the updated data
 }
 
 crud_insert <- function( conn, df, name ) {
 	insert_query <- query_insert_get(df = df, name = name, id_primary = id_primary)
+	colnames(df) <- dot2underscore(colnames(df))
 	update <- dbSendQuery(conn, insert_query )
 	df <- df[ is.na(df[[id_primary]]), ] # save from bug, it should not necessary
 	dbBind(res = update, params = df[,names(df) != id_primary])  # send the new data

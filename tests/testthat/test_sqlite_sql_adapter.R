@@ -86,6 +86,25 @@ test_that("Simple table add new line", {
 	rm_test_db(t_db)
 })
 
+test_that("crud_insert work", {
+	t_db <- mk_test_db()
+	td <- mk_td(t_db)
+	line_new <- data.frame(
+		colA     = 4,
+		colB     = 5,
+		rownames = NA
+	)
+	tbl_modified <- rbind(td$tbl_simple, line_new)
+
+	crud_insert(t_db$con, tbl_modified, t_db$tab_name)
+
+	data_reread <- dbReadTable(t_db$con, t_db$tab_name)
+	expect_equal(as.data.frame(data_reread)
+							 , as.data.frame(tbl_modified)) # fix
+
+	rm_test_db(t_db)
+})
+
 test_that("Simple table sync", {
 	t_db <- mk_test_db()
 	td <- mk_td(t_db)
@@ -119,7 +138,7 @@ test_that("crud_create works.. todo", {
 	td <- mk_td(t_db)
 	## 1. init
 	df <- iris
-	names(df) <- gsub("\\.", "_" ,names(df)) # dots are not compatible with this syntax
+	# names(df) <- gsub("\\.", "_" ,names(df)) # dots are not compatible with this syntax
 	tablename <- "iris"
   ## 2. do
 	crud_create(t_db$con, df, tablename)

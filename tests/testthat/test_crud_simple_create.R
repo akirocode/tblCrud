@@ -13,10 +13,10 @@ test_that("query_create_get create the iris query",{
 
 	expected <- "CREATE TABLE IF NOT EXISTS  iris2  (
  rownames integer primary key asc autoincrement,
-  `Sepal_Length` REAL,
-  `Sepal_Width` REAL,
-  `Petal_Length` REAL,
-  `Petal_Width` REAL,
+  `Sepal.Length` REAL,
+  `Sepal.Width` REAL,
+  `Petal.Length` REAL,
+  `Petal.Width` REAL,
   `Species` TEXT );"
   expect_equal(query, expected)
 

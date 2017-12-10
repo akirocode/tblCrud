@@ -1,6 +1,6 @@
 library(DBI)
 library(RSQLite)
-library(beeboler)
+library(tblCrud)
 
 rm(list = ls())
 wd <- "/tmp"
@@ -17,7 +17,7 @@ ret <- dbSendQuery(conn = con,
 dbRemoveTable(con, "iris")
 ## setup the new table
 iris1 <- iris
-names(iris1) <- gsub("\\.", "_" ,names(iris1)) # dots are not compatible with this syntax
+#names(iris1) <- gsub("\\.", "_" ,names(iris1)) # dots are not compatible with this syntax
 ## write it
 dbWriteTable(con, "iris", iris1, row.names = "rownames")      # create and populate a table (adding the row names as a separate columns used as row ID)
 data1 <- dbReadTable(con, "iris")
@@ -27,7 +27,7 @@ head(data1)
 
 # create a modified version of `iris`
 iris2 <- data1
-iris2$Sepal_Length <- 5
+iris2$Sepal.Length <- 5
 
 ## update using variables
 crud_update(con, iris2, "iris")
@@ -38,7 +38,7 @@ head(data2)
 
 new_line<-
 	tribble(
-		~Sepal_Length, ~Sepal_Width, ~Petal_Length, ~Petal_Width, ~Species,
+		~Sepal.Length, ~Sepal.Width, ~Petal.Length, ~Petal.Width, ~Species,
 		50,           3.5,           14,          20, "new_species"
 	)
 require(dplyr)
@@ -47,7 +47,7 @@ head(new_df)
 crud_sync(con, new_df, "iris")
 
 data3 <- dbReadTable(con, "iris")
-data3
+data3  ## <na>s remains because the table has been created with dbWriteTable
 # todo: the id is not updated
 unique(data3$Species)
 
@@ -67,16 +67,20 @@ dbRemoveTable(con, tablename)
 iris2 <- iris
 df <- iris2
 ## create
-names(df) <- gsub("\\.", "_" ,names(df)) # dots are not compatible with this syntax
+# names(df) <- gsub("\\.", "_" ,names(df)) # dots are not compatible with this syntax
 update <- crud_create(con, df, tablename)
 dbReadTable(con, tablename)
-dbDisconnect(con)
-## increment
-incr_query <- "ALTER TABLE iris AUTO_INCREMENT = 1;"
-dbSendQuery(con, incr_query)
+
 ######################
 ## wip
-data3[order(data3$Sepal_Width),]
+
+## increment
+incr_query <- "select AUTOINCREMENT from iris2;"
+incr_query <- "SELECT SEQ from sqlite_sequence WHERE name='iris'"
+incr_query <- "SELECT last_insert_rowid()"
+boh<-dbSendQuery(con, incr_query)
+boh
+dbFetch(boh)
 
 ## rownames problem
 mt2 <- bind_cols(mtcars, tibble(rownames(mtcars)))
