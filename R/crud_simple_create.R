@@ -2,7 +2,7 @@
 
 query_create_get <- function(con, df, name, id_primary = NULL) {
 	fields <- vapply(df, function(x) DBI::dbDataType(con, x), character(1))
-	#names(fields) <- gsub("\\.", "_" ,names(fields)) # dots are not compatible with this syntax
+	# names(fields) <- gsub("\\.", "_" ,names(fields)) # dots are not compatible with this syntax
 	field_names <- dbQuoteIdentifier(con, names(fields))
 	field_types <- unname(fields)
 	fields <- paste0(field_names, " ", field_types)

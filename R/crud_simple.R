@@ -26,6 +26,7 @@ query_insert_get <- function(df, name, id_primary = NULL) {
 	## todo: remove this line
 	con <- dbConnect(drv=dbDriver("SQLite"), con =":memory:")
 	var_list_quoted <- dbQuoteIdentifier(con, var_list)
+	dbDisconnect(con)
 	column_list = paste0(collapse = ", ", var_list_quoted)
 	value_list = paste0(collapse = ", ", "$", fixed_var_list)
 	return(
