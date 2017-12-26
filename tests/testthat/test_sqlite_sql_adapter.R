@@ -10,7 +10,7 @@ t_label = "sqlite_sql_adapter"
 
 ## see vignette_crud_simple
 
-# test_db ---------------------------------------------------------
+# setup test_db ---------------------------------------------------------
 mk_test_db <- function() {
 	t_db <- list()
 	t_db$filename <- tempfile(t_label, fileext = ".sqlite")
@@ -19,8 +19,12 @@ mk_test_db <- function() {
 # dbRemoveTable(con, tab_name)
 	t_db
 }
+rm_test_db <- function(t_db) {
+	dbDisconnect(t_db$con)
+	file.remove(t_db$filename)
+}
 
-# setup test data ------------------------------------------------------
+# setup test_data ------------------------------------------------------
 mk_td <- function(t_db) {
 	td <- list()
 	td$tbl_simple <- tibble::tibble(colA = c(1, 2),
@@ -29,10 +33,7 @@ mk_td <- function(t_db) {
 	dbWriteTable(t_db$con, t_db$tab_name, td$tbl_simple)
 	td
 }
-rm_test_db <- function(t_db) {
-	dbDisconnect(t_db$con)
-	file.remove(t_db$filename)
-}
+
 # tests -------------------------------------------------------------------
 
 test_that("Table update returns error if there is no id_primary", {
@@ -132,13 +133,13 @@ test_that("Simple table sync", {
 
 context("test crud_create")
 
-test_that("crud_create works.. todo", {
+test_that("crud_create works with '.' in colnames", {
 	## 0. setup
 	t_db <- mk_test_db()
 	td <- mk_td(t_db)
 	## 1. init
 	df <- iris
-	# names(df) <- gsub("\\.", "_" ,names(df)) # dots are not compatible with this syntax
+	df$Species <- as.character(df$Species) #avoid factor warnings
 	tablename <- "iris"
   ## 2. do
 	crud_create(t_db$con, df, tablename)
