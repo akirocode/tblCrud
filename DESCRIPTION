@@ -10,5 +10,8 @@ Encoding: UTF-8
 LazyData: true
 Depends: dplyr,
 	assertthat
-Suggests: testthat
+Suggests: testthat,
+    knitr,
+    rmarkdown
 Imports: dplyr
+VignetteBuilder: knitr
