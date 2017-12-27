@@ -9,7 +9,7 @@ This is still an Alpha version.
 2. Append data to it.
 3. Modify old data and append new data and sincronize the data on db.
 
-For examples see the [Vignette](./vignettes/Introduction to tblCrud.Rmd)
+For examples see the [Vignette](./vignettes/Introduction_to_tblCrud.Rmd)
 
 # Compatibility
 
