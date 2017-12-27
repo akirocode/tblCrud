@@ -1,0 +1,16 @@
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+
+language: R
+sudo: false
+cache: packages
+# warnings
+warnings_are_errors: false
+# coverage
+after_success:
+	- bash <(curl -s https://codecov.io/bash)
+# to avoid the error: "Package vignette without corresponding PDF/HTML"
+env:
+	global:
+	- WARNINGS_ARE_ERRORS=0
+- R_BUILD_ARGS=--no-manual
+- R_CHECK_ARGS=--no-manual --as-cran
