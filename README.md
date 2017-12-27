@@ -32,27 +32,27 @@ bool_return <- crud_create(con, iris, tablename)
 
 This is the content of the table:
 
-	```{r}
+```{r}
 dbReadTable(con, tablename) %>%
 	tail
 ```
 
 Grab a small subset, which work on:
 
-	```{r}
+```{r}
 df <- dbGetQuery(con, paste("select * from", tablename, " where Species == 'setosa' limit 10"  ))
 df
 ```
 
 Modify this subset:
 
-	```{r}
+```{r}
 df_1 <- df %>% mutate(Petal.Width = 50)
 ```
 
 Add new lines to this subset:
 
-	```{r}
+```{r}
 new_line<-
 	tribble(
 		~Sepal.Length, ~Sepal.Width, ~Petal.Length, ~Petal.Width, ~Species,
@@ -64,7 +64,7 @@ head(new_df)
 
 Now synchronize this subset on database:
 
-	```{r}
+```{r}
 crud_sync(con, new_df, tablename)
 
 dbReadTable(con, tablename) %>%
