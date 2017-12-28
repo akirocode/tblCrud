@@ -4,7 +4,7 @@ Title: Sync data.frames and tables by SQL
 Version: 0.1.0
 Author: Andrea Melloncelli
 Maintainer: Andrea Melloncelli <andrea.melloncelli@gmail.com>
-Description: 
+Description: Enable crud system for data.frame 
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
