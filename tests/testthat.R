@@ -1,4 +1,4 @@
 library(testthat)
-library(beeboler)
+library(tblCrud)
 
-test_check("beeboler")
+test_check("tblCrud")
