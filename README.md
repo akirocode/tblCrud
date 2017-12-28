@@ -1,4 +1,6 @@
 [![Travis-CI Build Status](https://travis-ci.org/akirocode/tblCrud.svg?branch=master)](https://travis-ci.org/akirocode/tblCrud)
+[![codecov](https://codecov.io/gh/akirocode/tblCrud/branch/master/graph/badge.svg)](https://codecov.io/gh/akirocode/tblCrud) 
+
 
 # Version
 
