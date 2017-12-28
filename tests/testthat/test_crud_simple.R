@@ -125,3 +125,18 @@ test_that("query_insert_get searching id into attrs", {
 	expect_equal(object , expect)
 
 })
+
+test_that("query_insert_get returns error if there is no `id_primary` attribute", {
+	tbl <-
+		tribble(
+			~col1, ~col2,
+			1,     2L
+		)
+	expected_error <- "id_primary not given"
+
+	expect_error(
+		object = object <- query_insert_get(tbl, "iris")
+		, regexp = expected_error
+	)
+
+})
