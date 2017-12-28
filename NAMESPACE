@@ -1,1 +1,6 @@
 exportPattern("^[[:alpha:]]+")
+import("DBI")
+import("RSQLite")
+import("assertthat")
+import("dplyr")
+import("purrr")
