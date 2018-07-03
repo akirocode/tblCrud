@@ -35,6 +35,25 @@ crud_insert_asis <- function( conn, df, name ) {
 	res <- dbBind(res = update, params = df[,names(df) != id_primary])  # send the new data
 	dbClearResult(res)
 }
+
+crud_insert_aincr <- function( conn, df, name ) {
+	dbBegin(conn)
+	crud_insert_asis(conn, df, name)
+	# get_rowid_sequence <- function(conn, ...) UseMethod("get_rowid_sequence")
+	# get_rowid_sequence.SQLiteConnection <- function(conn, length_out) {
+	# 	last_insert_rowid <- dbGetQuery(conn, "select last_insert_rowid() as rowid;") %>%
+	# 		pull(rowid)
+	# 	seq(length.out = length_out,
+	# 			to         = last_insert_rowid,
+	# 			by         = 1)
+	# }
+	# get_rowid_sequence(conn = conn, length_out = nrow(df))
+	dbCommit(conn)
+	# df_new <- df
+	# df_new$rownames <-
+	# 	df_new
+}
+
 crud_sync <- function( conn, df, name ) {
 	df_insert <- df[ is.na(df[[id_primary]]), ]
 	df_update <- df[ ! is.na(df[[id_primary]]), ]

@@ -33,6 +33,25 @@ mk_td <- function(t_db) {
 	dbWriteTable(t_db$con, t_db$tab_name, td$tbl_simple)
 	td
 }
+mk_td_autoincr <- function(t_db) {
+	td <- list()
+	td$tbl_simple <- tibble::tibble(colA = c(1, 2),
+																	colB = c(1, 10))
+	##
+	create_query <-  query_create_get(t_db$con,
+																		name = t_db$tab_name,
+																		df = td$tbl_simple)
+	ret <- dbSendQuery(conn = t_db$con,
+										 statement = create_query)
+	dbClearResult(ret)
+	##
+	dbWriteTable(t_db$con, t_db$tab_name, td$tbl_simple, append = TRUE)
+
+	td$tbl_simple[[id_primary]] <- as.integer(rownames(td$tbl_simple))  # use the row names as unique row ID
+	td$tbl_simple <- td$tbl_simple[, c("rownames","colA","colB")] # expected order
+	td
+
+}
 
 # tests: crud_update --------------------------------------------------------
 
@@ -68,7 +87,7 @@ test_that("Simple table update", {
 	rm_test_db(t_db)
 })
 
-# tests: crud_insert ------------------------------------------------------
+# tests: crud_insert_asis ------------------------------------------------------
 
 test_that("Simple table add new line", {
 	t_db <- mk_test_db()
@@ -89,7 +108,7 @@ test_that("Simple table add new line", {
 	rm_test_db(t_db)
 })
 
-test_that("crud_insert work", {
+test_that("crud_insert_asis work", {
 	t_db <- mk_test_db()
 	td <- mk_td(t_db)
 	line_new <- data.frame(
@@ -108,6 +127,35 @@ test_that("crud_insert work", {
 	rm_test_db(t_db)
 })
 
+# tests: crud_insert_aincr -------------------------------------------------------
+
+test_that("crud_insert_aincr work", {
+	t_db <- mk_test_db()
+	td <- mk_td_autoincr(t_db)
+	line_new <- data.frame(
+		colA     = 4,
+		colB     = 5,
+		rownames = NA
+	)
+	tbl_modified <- rbind(td$tbl_simple, line_new)
+
+	tbl_returned <- crud_insert_aincr(t_db$con, tbl_modified, t_db$tab_name)
+
+	data_reread <- dbReadTable(t_db$con, t_db$tab_name)
+
+	{
+		tbl_expected <- tbl_modified
+		tbl_expected$rownames <- 1:3
+	}
+
+	expect_equal(as.data.frame(data_reread)
+							 , as.data.frame(tbl_expected))
+
+	# expect_equal(as.data.frame(data_reread)
+	# 						 , as.data.frame(tbl_returned))
+
+	rm_test_db(t_db)
+})
 # tests: crud_sync --------------------------------------------------------
 
 test_that("Simple table sync", {
