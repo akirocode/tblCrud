@@ -6,7 +6,6 @@ rm(list = ls())
 wd <- "/tmp"
 filename  <- "sq_test.sq"
 
-
 # setup_data --------------------------------------------------------------
 
 ## connect
@@ -69,19 +68,30 @@ df <- iris2
 ## create
 # names(df) <- gsub("\\.", "_" ,names(df)) # dots are not compatible with this syntax
 update <- crud_create(con, df, tablename)
-dbReadTable(con, tablename)
+
+iris3 <- dbReadTable(con, tablename)
+new_line<-
+	tribble(
+		~Sepal.Length, ~Sepal.Width, ~Petal.Length, ~Petal.Width, ~Species,
+		50,           3.5,           14,          20, "new_species"
+	)
+require(dplyr)
+new_df <-	bind_rows(new_line,	iris3)
+head(new_df)
+crud_sync(con, new_df, tablename)
+
+data3 <- dbReadTable(con, tablename) %>%
+	tbl_df
+data3  ## <na>s remains because the table has been created with dbWriteTable
 
 ######################
-## wip
+## autoincrement useful notes
 
 ## increment
 incr_query <- "select AUTOINCREMENT from iris2;"
 incr_query <- "SELECT SEQ from sqlite_sequence WHERE name='iris'"
-incr_query <- "SELECT last_insert_rowid()"
+incr_query <- "SELECT last_insert_rowid()"  ## this works
 boh<-dbSendQuery(con, incr_query)
 boh
 dbFetch(boh)
 
-## rownames problem
-mt2 <- bind_cols(mtcars, tibble(rownames(mtcars)))
-bind_rows(mt2, data.frame(cyl = 8))
