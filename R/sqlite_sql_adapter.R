@@ -46,15 +46,22 @@ crud_insert_aincr <- function( conn, df, name ) {
 	df_new
 }
 
-crud_insert <- crud_insert_aincr
-
-crud_sync <- function( conn, df, name ) {
+crud_sync_asis <- function( conn, df, name ) {
 	df_insert <- df[ is.na(df[[id_primary]]), ]
 	df_update <- df[ ! is.na(df[[id_primary]]), ]
-	crud_insert( conn, df_insert, name )
-	crud_update( conn, df_update, name )
+	crud_insert_asis( conn, df_insert, name )
+	crud_update( conn, df_update, name ) # assume nothing is changed
 }
 
+crud_sync_aincr <- function( conn, df, name ) {
+	df_insert <- df[ is.na(df[[id_primary]]), ]
+	df_update <- df[ ! is.na(df[[id_primary]]), ]
+	return_insert <- crud_insert_aincr( conn, df_insert, name )
+	crud_update( conn, df_update, name ) # assume nothing is changed
+	bind_rows(df_update, return_insert)
+}
+
+crud_sync <- crud_sync_asis
 # private -----------------------------------------------------------------
 
 # tbl_to_tab <- function(df) {
@@ -78,5 +85,5 @@ get_rowid_sequence.SQLiteConnection <- function(conn, length_out) {
 		pull(rowid)
 	seq(length.out = length_out,
 			to         = last_insert_rowid,
-			by         = 1)
+			by         = 1L)
 }

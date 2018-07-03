@@ -156,9 +156,9 @@ test_that("crud_insert_aincr work", {
 
 	rm_test_db(t_db)
 })
-# tests: crud_sync --------------------------------------------------------
+# tests: crud_sync_asis --------------------------------------------------------
 
-test_that("Simple table sync", {
+test_that("Simple table sync (asis)", {
 	t_db <- mk_test_db()
 	td <- mk_td(t_db)
 	line_new <- data.frame(
@@ -171,11 +171,41 @@ test_that("Simple table sync", {
 		colB[1] <- 3
 	})
 
-	crud_sync(t_db$con, tbl_modified, t_db$tab_name)
+	crud_sync_asis(t_db$con, tbl_modified, t_db$tab_name)
 
 	data_reread <- dbReadTable(t_db$con, t_db$tab_name)
 	expect_equal(as.data.frame(data_reread)
-							 , as.data.frame(tbl_modified)) # fix
+							 , as.data.frame(tbl_modified))
+
+	rm_test_db(t_db)
+})
+
+# tests: crud_sync_aincr --------------------------------------------------------
+
+test_that("Simple table sync (aincr)", {
+	t_db <- mk_test_db()
+	td <- mk_td_autoincr(t_db)
+	line_new <- data.frame(
+		colA     = 4,
+		colB     = 5,
+		rownames = NA
+	)
+	tbl_modified_1 <- rbind(td$tbl_simple, line_new)
+	tbl_modified <- within(tbl_modified_1, {
+		colB[1] <- 3
+	})
+	tbl_expected <- within(tbl_modified, {
+		rownames <- 1:3
+	})
+
+	tbl_returned <- crud_sync_aincr(t_db$con, tbl_modified, t_db$tab_name)
+
+	data_reread <- dbReadTable(t_db$con, t_db$tab_name)
+	expect_equal(as.data.frame(data_reread)
+							 , as.data.frame(tbl_expected))
+
+	expect_equal(as_tibble(data_reread)
+							 , as_tibble(tbl_returned))
 
 	rm_test_db(t_db)
 })
