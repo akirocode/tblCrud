@@ -5,7 +5,7 @@ id_primary =  "rownames"
 crud_create <- function( conn, df, name ) {
 	.crud_create_empty(conn, df, name)
 	df2 <- cbind(df, data.frame( rownames = as.integer(NA), stringsAsFactors = FALSE))
-	crud_sync(conn, df2, name)
+	crud_sync_aincr(conn, df2, name)
 }
 
 .crud_create_empty <- function( conn, df, name ) {
