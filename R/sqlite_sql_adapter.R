@@ -37,22 +37,16 @@ crud_insert_asis <- function( conn, df, name ) {
 }
 
 crud_insert_aincr <- function( conn, df, name ) {
-	dbBegin(conn)
+	dbBegin(conn)     # it does not seem necessary
 	crud_insert_asis(conn, df, name)
-	# get_rowid_sequence <- function(conn, ...) UseMethod("get_rowid_sequence")
-	# get_rowid_sequence.SQLiteConnection <- function(conn, length_out) {
-	# 	last_insert_rowid <- dbGetQuery(conn, "select last_insert_rowid() as rowid;") %>%
-	# 		pull(rowid)
-	# 	seq(length.out = length_out,
-	# 			to         = last_insert_rowid,
-	# 			by         = 1)
-	# }
-	# get_rowid_sequence(conn = conn, length_out = nrow(df))
+	rowids <- get_rowid_sequence(conn = conn, length_out = nrow(df))
 	dbCommit(conn)
-	# df_new <- df
-	# df_new$rownames <-
-	# 	df_new
+	df_new <- df
+	df_new$rownames <- rowids
+	df_new
 }
+
+# crud_insert <- crud_insert_aincr
 
 crud_sync <- function( conn, df, name ) {
 	df_insert <- df[ is.na(df[[id_primary]]), ]
@@ -73,3 +67,16 @@ crud_sync <- function( conn, df, name ) {
 # 	df[[id_primary]] <- NULL
 # 	df
 # }
+
+
+# rowid -------------------------------------------------------------------
+
+get_rowid_sequence <- function(conn, ...) UseMethod("get_rowid_sequence")
+
+get_rowid_sequence.SQLiteConnection <- function(conn, length_out) {
+	last_insert_rowid <- dbGetQuery(conn, "select last_insert_rowid() as rowid;") %>%
+		pull(rowid)
+	seq(length.out = length_out,
+			to         = last_insert_rowid,
+			by         = 1)
+}

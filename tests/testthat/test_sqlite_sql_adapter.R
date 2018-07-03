@@ -151,8 +151,8 @@ test_that("crud_insert_aincr work", {
 	expect_equal(as.data.frame(data_reread)
 							 , as.data.frame(tbl_expected))
 
-	# expect_equal(as.data.frame(data_reread)
-	# 						 , as.data.frame(tbl_returned))
+	expect_equal(as.data.frame(data_reread)
+							 , as.data.frame(tbl_returned))
 
 	rm_test_db(t_db)
 })
