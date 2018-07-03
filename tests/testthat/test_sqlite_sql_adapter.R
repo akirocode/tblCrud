@@ -34,7 +34,7 @@ mk_td <- function(t_db) {
 	td
 }
 
-# tests -------------------------------------------------------------------
+# tests: crud_update --------------------------------------------------------
 
 test_that("Table update returns error if there is no id_primary", {
 	t_db <- mk_test_db()
@@ -68,6 +68,8 @@ test_that("Simple table update", {
 	rm_test_db(t_db)
 })
 
+# tests: crud_insert ------------------------------------------------------
+
 test_that("Simple table add new line", {
 	t_db <- mk_test_db()
 	td <- mk_td(t_db)
@@ -78,7 +80,7 @@ test_that("Simple table add new line", {
 	)
 	tbl_modified <- rbind(td$tbl_simple, line_new)
 
-	crud_insert(t_db$con, tbl_modified, t_db$tab_name)
+	crud_insert_asis(t_db$con, tbl_modified, t_db$tab_name)
 
 	data_reread <- dbReadTable(t_db$con, t_db$tab_name)
 	expect_equal(as.data.frame(data_reread)
@@ -97,7 +99,7 @@ test_that("crud_insert work", {
 	)
 	tbl_modified <- rbind(td$tbl_simple, line_new)
 
-	crud_insert(t_db$con, tbl_modified, t_db$tab_name)
+	crud_insert_asis(t_db$con, tbl_modified, t_db$tab_name)
 
 	data_reread <- dbReadTable(t_db$con, t_db$tab_name)
 	expect_equal(as.data.frame(data_reread)
@@ -105,6 +107,8 @@ test_that("crud_insert work", {
 
 	rm_test_db(t_db)
 })
+
+# tests: crud_sync --------------------------------------------------------
 
 test_that("Simple table sync", {
 	t_db <- mk_test_db()
@@ -127,6 +131,9 @@ test_that("Simple table sync", {
 
 	rm_test_db(t_db)
 })
+
+# tests: crud_create ------------------------------------------------------
+
 ## work in progress
 
 ## test crud_update function(?)
