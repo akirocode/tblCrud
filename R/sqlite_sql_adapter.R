@@ -46,12 +46,12 @@ crud_insert_aincr <- function( conn, df, name ) {
 	df_new
 }
 
-# crud_insert <- crud_insert_aincr
+crud_insert <- crud_insert_aincr
 
 crud_sync <- function( conn, df, name ) {
 	df_insert <- df[ is.na(df[[id_primary]]), ]
 	df_update <- df[ ! is.na(df[[id_primary]]), ]
-	crud_insert_asis( conn, df_insert, name )
+	crud_insert( conn, df_insert, name )
 	crud_update( conn, df_update, name )
 }
 
